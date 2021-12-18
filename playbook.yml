@@ -1,0 +1,141 @@
+---
+- name: HOA_4.1
+  hosts: elasticsearch
+  tags: elasticsearch,ubuntu
+  tasks:
+    - name: Include variables
+      include_vars:
+        file: config.yml
+
+    - name: Install Elasticsearch dependency on Ubuntu
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: openjdk-8-jdk
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Nginx on Ubuntu
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: nginx
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Stopping Apache2 on Ubuntu
+      service:
+        name: apache2
+        state: stopped
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install apt-transport-https
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: apt-transport-https
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Elasticsearch on Ubuntu
+      include_role:
+        name: ubuntuelasticsearch
+      when: ansible_facts['distribution'] == 'Ubuntu'
+      
+- name: HOA_4.1
+  hosts: elasticsearch
+  tags: elasticsearch,centos
+  tasks:
+    - name: Include variables
+      include_vars:
+        file: config.yml
+
+    - name: Install Java [Elastic search dependency] on CentOS
+      include_role:
+        name: installcentospkg
+      vars:
+        package: java-1.8.0-openjdk
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configuring Elastic Search on CentOS
+      include_role:
+        name: centoselasticsearch
+      when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install and Configure Kibana
+  hosts: kibana
+  tags: kibana,ubuntu
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: config.yml
+
+    - name: Install Kibana on Ubuntu
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: kibana
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Kibana on Ubuntu
+      include_role:
+        name: ubuntukibana
+      when: ansible_facts['distribution'] == 'Ubuntu'
+      
+- name: Install and Configure Kibana
+  hosts: kibana
+  tags: kibana,centos
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: config.yml
+
+    - name: Install Kibana on CentOS
+      include_role:
+        name: installcentospkg
+      vars:
+        package: kibana
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configure Kibana on CentOS
+      include_role:
+        name: centoskibana
+      when: ansible_facts['distribution'] == 'CentOS'
+
+
+- name: Install and Configure Logstash
+  hosts: logstash
+  tags: logstash,ubuntu
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: config.yml
+
+    - name: Install Logstash on Ubuntu
+      include_role:
+        name: installubuntupkg
+      vars:
+        package: logstash
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Configure Logstash on Ubuntu
+      include_role:
+        name: ubuntulogstash
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Install and Configure Logstash
+  hosts: logstash
+  tags: logstash,centos
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: config.yml
+
+    - name: Install logstash on CentOS
+      include_role:
+        name: installcentospkg
+      vars:
+        package: logstash
+      when: ansible_facts['distribution'] == 'CentOS'
+
+    - name: Configure logstash on CentOS
+      include_role:
+        name: centoslogstash
+      when: ansible_facts['distribution'] == 'CentOS'
